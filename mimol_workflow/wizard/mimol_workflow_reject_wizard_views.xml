@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="mimol_workflow_reject_wizard_view_form" model="ir.ui.view">
+            <field name="name">mimol.workflow.reject.wizard.view.form</field>
+            <field name="model">mimol.workflow.reject.wizard</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <group id="info" string="Reddetmeden önce Red nedeni girilmelidir">
+                            <field name="workflow_id" readonly="True"/>
+                            <field name="reject_reason"/>
+                        </group>
+                    </sheet>
+                    <footer>
+                        <button name="action_reject_with_reason" string="OK" type="object" class="oe_highlight"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <record id="mimol_workflow_reject_wizard_action" model="ir.actions.act_window">
+            <field name="name">İş Akışı Reddi</field>
+            <field name="res_model">mimol.workflow.reject.wizard</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+    </data>
+</odoo>
