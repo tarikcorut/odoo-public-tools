@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     'name': "mimol_workflow",
-    'version': '18.0.1',
+    'version': '19.0.1',
     'category': '',
     'sequence': 10,
     'summary': """Mimol Workflow engine""",
