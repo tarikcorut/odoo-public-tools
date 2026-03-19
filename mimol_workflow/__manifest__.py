@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     'name': "mimol_workflow",
-    'version': '15.0.1',
+    'version': '18.0.1',
     'category': '',
     'sequence': 10,
     'summary': """Mimol Workflow engine""",
@@ -22,9 +22,7 @@
     'assets': {
         'web.assets_backend': [
         ],
-        'web.assets_qweb': [
-
-        ],
     },
     'license': 'LGPL-3',
 }
+
