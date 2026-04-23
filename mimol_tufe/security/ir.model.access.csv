@@ -1,0 +1,3 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_mimol_tufe_index_user,mimol.tufe.index.user,model_mimol_tufe_index,base.group_user,1,0,0,0
+access_mimol_tufe_index_admin,mimol.tufe.index.admin,model_mimol_tufe_index,base.group_system,1,1,1,1
