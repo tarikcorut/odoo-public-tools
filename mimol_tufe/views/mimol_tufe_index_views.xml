@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_mimol_tufe_index_list" model="ir.ui.view">
+        <field name="name">mimol.tufe.index.tree</field>
+        <field name="model">mimol.tufe.index</field>
+        <field name="arch" type="xml">
+            <tree string="Ekonomik Endeksler">
+                <header>
+                    <button name="action_fetch_tufe_indexes" string="Şimdi Çek"
+                            type="object" class="btn-primary"
+                            groups="base.group_system"/>
+                </header>
+                <field name="index_type"/>
+                <field name="year"/>
+                <field name="month"/>
+                <field name="index_value"/>
+                <field name="last_fetched_at" optional="show"/>
+                <field name="source_url" optional="hide"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_mimol_tufe_index_form" model="ir.ui.view">
+        <field name="name">mimol.tufe.index.form</field>
+        <field name="model">mimol.tufe.index</field>
+        <field name="arch" type="xml">
+            <form string="Ekonomik Endeks">
+                <header>
+                    <button name="action_fetch_tufe_indexes" string="Kaynaktan Çek"
+                            type="object" class="btn-primary"
+                            groups="base.group_system"/>
+                </header>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="index_type"/>
+                            <field name="year"/>
+                            <field name="month"/>
+                            <field name="index_value"/>
+                        </group>
+                        <group>
+                            <field name="last_fetched_at"/>
+                            <field name="source_url" widget="url"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_mimol_tufe_index_search" model="ir.ui.view">
+        <field name="name">mimol.tufe.index.search</field>
+        <field name="model">mimol.tufe.index</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="year"/>
+                <field name="month"/>
+                <field name="index_type"/>
+                <filter name="tufe" string="TÜFE" domain="[('index_type','=','tufe')]"/>
+                <filter name="ufe" string="Yİ-ÜFE" domain="[('index_type','=','ufe')]"/>
+                <group>
+                    <filter name="group_type" string="Tip" context="{'group_by':'index_type'}"/>
+                    <filter name="group_year" string="Yıl" context="{'group_by':'year'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_mimol_tufe_index" model="ir.actions.act_window">
+        <field name="name">Ekonomik Endeksler</field>
+        <field name="res_model">mimol.tufe.index</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <menuitem id="menu_mimol_tufe_root"
+              name="Endeksler"
+              parent="base.menu_custom"
+              sequence="90"/>
+
+    <menuitem id="menu_mimol_tufe_index"
+              name="TÜFE / Yİ-ÜFE"
+              parent="menu_mimol_tufe_root"
+              action="action_mimol_tufe_index"
+              sequence="10"/>
+
+</odoo>
