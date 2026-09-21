@@ -168,10 +168,10 @@
         <field name="name">mail.activity.pivot.reporting</field>
         <field name="model">mail.activity</field>
         <field name="arch" type="xml">
+            <!-- Varsayılan ölçü kayıt sayısı; "Süre (gün)" ölçüler menüsünden eklenir -->
             <pivot string="İş Analizi" sample="1">
                 <field name="res_model_name" type="row"/>
                 <field name="reporting_kind" type="col"/>
-                <field name="duration_days" type="measure"/>
             </pivot>
         </field>
     </record>

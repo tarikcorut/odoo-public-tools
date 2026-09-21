@@ -280,3 +280,7 @@ class ReportingDashboard(models.Model):
             'type': 'ir.actions.client', 'tag': 'display_notification',
             'params': {'title': _('Pano taraması'), 'type': 'info', 'message': _('Yeni pano bulunmadı.')},
         }
+
+    def action_reload_menus(self):
+        """Üretilen menü üst çubukta sayfa yenilenince görünür."""
+        return {'type': 'ir.actions.client', 'tag': 'reload'}

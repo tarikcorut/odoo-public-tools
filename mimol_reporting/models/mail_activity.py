@@ -45,7 +45,7 @@ class MailActivity(models.Model):
     )
     done_feedback = fields.Text(string='Geri Bildirim', readonly=True)
     duration_days = fields.Float(
-        string='Süre (gün)', compute='_compute_duration', store=True, digits=(16, 1),
+        string='Süre (gün)', compute='_compute_duration', store=True, digits=(16, 2),
         help='Aktivitenin açılışından tamamlanmasına kadar geçen süre.',
     )
     was_late = fields.Boolean(
@@ -78,7 +78,7 @@ class MailActivity(models.Model):
     def _compute_duration(self):
         for rec in self:
             if rec.date_done_dt and rec.create_date:
-                rec.duration_days = round((rec.date_done_dt - rec.create_date).total_seconds() / 86400.0, 1)
+                rec.duration_days = round((rec.date_done_dt - rec.create_date).total_seconds() / 86400.0, 2)
                 rec.was_late = bool(rec.date_deadline and rec.date_done_dt.date() > rec.date_deadline)
             else:
                 rec.duration_days = 0.0

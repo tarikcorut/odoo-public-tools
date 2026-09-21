@@ -65,6 +65,8 @@
             <form string="Pano Kaydı">
                 <header>
                     <button name="action_open" type="object" string="Panoya Git" class="btn-primary"/>
+                    <button name="action_reload_menus" type="object" string="Menüleri Yenile" icon="fa-refresh"
+                            help="Üretilen menünün üst menü çubuğunda görünmesi için sayfayı yeniler."/>
                 </header>
                 <sheet>
                     <widget name="web_ribbon" title="Arşiv" bg_color="text-bg-danger" invisible="active"/>
