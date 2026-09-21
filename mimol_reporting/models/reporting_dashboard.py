@@ -247,7 +247,11 @@ class ReportingDashboard(models.Model):
 
     @api.model
     def action_scan_menus(self):
-        """Ayarlar butonu ve kurulum kancası: yeni panoları kayıt defterine ekle."""
+        """Ayarlar butonu ve kurulum kancası: yeni panoları kayıt defterine ekle.
+        Menü adları kullanıcının dilinde (context lang yoksa kaynak dil olan
+        İngilizce dönerdi) okunur."""
+        lang = self.env.context.get('lang') or self.env.user.lang or 'en_US'
+        self = self.with_context(lang=lang)
         existing = set(self.with_context(active_test=False).search([]).mapped('menu_id').ids)
         created = self.browse()
         for menu in self._scan_candidate_menus():
