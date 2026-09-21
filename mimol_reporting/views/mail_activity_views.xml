@@ -64,33 +64,45 @@
                 <progressbar field="reporting_kind" colors='{"approval": "danger", "task": "info", "info": "muted"}'/>
                 <templates>
                     <t t-name="kanban-box">
-                        <div class="oe_kanban_card oe_kanban_global_click_edit o_kanban_record_has_image_fill">
-                            <div class="d-flex justify-content-between align-items-start">
-                                <span t-attf-class="badge rounded-pill #{record.reporting_kind.raw_value == 'approval' ? 'text-bg-danger' : record.reporting_kind.raw_value == 'task' ? 'text-bg-primary' : 'text-bg-secondary'}">
-                                    <field name="reporting_kind"/>
+                        <t t-set="kind" t-value="record.reporting_kind.raw_value"/>
+                        <t t-set="kind_cls" t-value="kind == 'approval' ? 'danger' : kind == 'task' ? 'primary' : 'secondary'"/>
+                        <div t-attf-class="oe_kanban_card d-flex flex-column w-100 p-2 border-start border-4 border-#{kind_cls}">
+                            <!-- Tür rozeti + uygulama -->
+                            <div class="d-flex justify-content-between align-items-center mb-1">
+                                <span t-attf-class="badge rounded-pill text-bg-#{kind_cls} fw-bold text-uppercase">
+                                    <i t-attf-class="fa fa-fw #{kind == 'approval' ? 'fa-check-square-o' : kind == 'task' ? 'fa-tasks' : 'fa-info-circle'}"/>
+                                    <t t-if="kind == 'approval'">Onay</t>
+                                    <t t-elif="kind == 'task'">Görev</t>
+                                    <t t-else="">Bilgi</t>
                                 </span>
-                                <small class="text-muted"><field name="res_model_name"/></small>
+                                <small class="text-muted text-truncate ms-2" t-att-title="record.res_model_name.value">
+                                    <field name="res_model_name"/>
+                                </small>
                             </div>
-                            <div class="mt-1">
-                                <a type="object" name="action_open_document" class="fw-bold text-decoration-none">
+                            <!-- Belge -->
+                            <div class="fw-bold text-truncate mb-1" t-att-title="record.res_name.value">
+                                <a type="object" name="action_open_document" class="text-decoration-none">
                                     <field name="res_name"/>
                                 </a>
                             </div>
-                            <div class="text-muted small">
-                                <i t-att-class="'fa fa-fw ' + (record.icon.raw_value || 'fa-tasks')" title="Aktivite tipi"/>
+                            <!-- Aktivite tipi · özet -->
+                            <div class="small text-muted text-truncate mb-2" t-att-title="record.summary.value">
+                                <i t-att-class="'fa fa-fw ' + (record.icon.raw_value || 'fa-tasks')"/>
                                 <field name="activity_type_id"/>
                                 <t t-if="record.summary.raw_value"> · <field name="summary"/></t>
                             </div>
-                            <div class="d-flex justify-content-between align-items-center mt-2">
-                                <span t-attf-class="#{record.deadline_state.raw_value == 'overdue' ? 'text-danger fw-bold' : record.deadline_state.raw_value == 'today' ? 'text-warning fw-bold' : 'text-muted'}">
+                            <!-- Son tarih + sorumlu -->
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span t-attf-class="small #{record.deadline_state.raw_value == 'overdue' ? 'text-danger fw-bold' : record.deadline_state.raw_value == 'today' ? 'text-warning fw-bold' : 'text-muted'}">
                                     <i class="fa fa-clock-o" title="Son tarih"/> <field name="date_deadline"/>
                                 </span>
                                 <field name="user_id" widget="many2one_avatar_user"/>
                             </div>
-                            <div class="mt-2">
-                                <button type="object" name="action_open_document" class="btn btn-sm btn-primary">Aç</button>
-                                <button type="object" name="action_reporting_mark_done" class="btn btn-sm btn-secondary"
-                                        t-if="record.reporting_kind.raw_value != 'approval'">Tamamlandı</button>
+                            <!-- Eylemler -->
+                            <div class="d-flex gap-1 mt-2">
+                                <button type="object" name="action_open_document" class="btn btn-sm btn-primary flex-fill">Aç</button>
+                                <button type="object" name="action_reporting_mark_done" class="btn btn-sm btn-outline-secondary flex-fill"
+                                        t-if="kind != 'approval'">Tamamlandı</button>
                             </div>
                         </div>
                     </t>

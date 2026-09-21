@@ -28,7 +28,15 @@ class MailActivity(models.Model):
     deadline_state = fields.Selection(
         [('overdue', 'Geciken'), ('today', 'Bugün'), ('planned', 'Planlanan'), ('done', 'Tamamlandı')],
         string='Durum', compute='_compute_deadline_state', store=True, index=True,
+        group_expand='_read_group_deadline_state',
     )
+
+    @api.model
+    def _read_group_deadline_state(self, states, domain, order):
+        """Kanban sütunları her zaman Geciken | Bugün | Planlanan sırasında (boş olsa da)."""
+        if self.env.context.get('active_test') is False:
+            return ['overdue', 'today', 'planned', 'done']
+        return ['overdue', 'today', 'planned']
     done_user_id = fields.Many2one('res.users', string='Tamamlayan', readonly=True, index=True)
     date_done_dt = fields.Datetime(string='Tamamlanma Zamanı', readonly=True)
     done_result = fields.Selection(
