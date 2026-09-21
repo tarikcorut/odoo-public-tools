@@ -73,8 +73,9 @@ class ReportingDashboard(models.Model):
     active = fields.Boolean(default=True)
     menu_id = fields.Many2one(
         'ir.ui.menu', string='Kaynak Menü', required=True, ondelete='cascade',
-        domain="[('action', '!=', False)]",
-        help='Panonun kendi modülündeki menüsü. Görünürlük ve açılan sayfa bu menüden gelir.',
+        domain="[('action', '!=', False), ('complete_name', 'not ilike', 'Raporlama Merkezi')]",
+        help='Panonun kendi modülündeki menüsü (Raporlama Merkezi altındaki üretilmiş menüler seçilmez). '
+             'Görünürlük ve açılan sayfa bu menüden gelir.',
     )
     menu_complete_name = fields.Char(related='menu_id.complete_name', string='Menü Yolu')
     action_ref = fields.Reference(
