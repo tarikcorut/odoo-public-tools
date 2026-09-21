@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Kök: Raporlama Merkezi -->
+    <menuitem id="menu_reporting_root" name="Raporlama Merkezi"
+              web_icon="mimol_reporting,static/description/icon.png"
+              groups="mimol_reporting.group_reporting_user" sequence="5"/>
+
+    <!-- Benim -->
+    <menuitem id="menu_reporting_my" name="İşlerim" parent="menu_reporting_root" sequence="10"/>
+    <menuitem id="menu_reporting_my_work" name="Benim İşlerim" parent="menu_reporting_my"
+              action="action_server_my_work" sequence="10"/>
+    <menuitem id="menu_reporting_my_approvals" name="Onaylarım" parent="menu_reporting_my"
+              action="action_server_my_approvals" sequence="20"/>
+    <menuitem id="menu_reporting_my_tasks" name="Görevlerim" parent="menu_reporting_my"
+              action="action_server_my_tasks" sequence="30"/>
+    <menuitem id="menu_reporting_my_history" name="Geçmişim" parent="menu_reporting_my"
+              action="action_server_my_history" sequence="40"/>
+
+    <!-- Yönetim -->
+    <menuitem id="menu_reporting_management" name="Yönetim" parent="menu_reporting_root"
+              groups="mimol_reporting.group_reporting_manager" sequence="20"/>
+    <menuitem id="menu_reporting_all_open" name="Tüm Açık İşler" parent="menu_reporting_management"
+              action="action_server_all_open" sequence="10"/>
+    <menuitem id="menu_reporting_all_history" name="Onay ve İş Geçmişi" parent="menu_reporting_management"
+              action="action_server_all_history" sequence="20"/>
+    <menuitem id="menu_reporting_reports" name="Raporlar" parent="menu_reporting_management"
+              action="action_server_reports" sequence="30"/>
+
+    <!-- Panolar: kartlar + kategori menüleri (kayıt defterinden üretilir) -->
+    <menuitem id="menu_reporting_dashboards" name="Panolar" parent="menu_reporting_root" sequence="30"/>
+    <menuitem id="menu_reporting_dashboards_all" name="Tüm Panolar" parent="menu_reporting_dashboards"
+              action="action_reporting_dashboards" sequence="1"/>
+
+    <!-- Ayarlar -->
+    <menuitem id="menu_reporting_config" name="Ayarlar" parent="menu_reporting_root"
+              groups="mimol_reporting.group_reporting_manager" sequence="90"/>
+    <menuitem id="menu_reporting_config_settings" name="Ayarlar" parent="menu_reporting_config"
+              action="action_reporting_config_settings" sequence="10"/>
+    <menuitem id="menu_reporting_config_activity_types" name="Aktivite Tipleri" parent="menu_reporting_config"
+              action="mail.mail_activity_type_action" sequence="20"/>
+    <menuitem id="menu_reporting_config_dashboards" name="Pano Kayıtları" parent="menu_reporting_config"
+              action="action_reporting_dashboard_config" sequence="30"/>
+    <menuitem id="menu_reporting_config_categories" name="Pano Kategorileri" parent="menu_reporting_config"
+              action="action_reporting_dashboard_category" sequence="40"/>
+</odoo>

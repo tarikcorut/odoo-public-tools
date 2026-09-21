@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="res_config_settings_view_form_reporting" model="ir.ui.view">
+        <field name="name">res.config.settings.view.form.reporting</field>
+        <field name="model">res.config.settings</field>
+        <field name="inherit_id" ref="base.res_config_settings_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//form" position="inside">
+                <app data-string="Raporlama Merkezi" string="Raporlama Merkezi" name="mimol_reporting"
+                     groups="mimol_reporting.group_reporting_manager">
+                    <block title="Geçmiş" name="reporting_history_block">
+                        <setting string="Tamamlanan aktiviteler saklansın"
+                                 help="Aktivite tipinde 'Keep Done' açıksa tamamlanan aktivite silinmez, arşivlenir; Geçmişim ve raporlar buna dayanır.">
+                            <field name="reporting_keep_done_default"/>
+                            <div class="mt-2">
+                                <button name="action_reporting_keep_done_all" type="object" string="Tüm tiplerde geçmişi sakla" class="btn-link" icon="fa-history"/>
+                            </div>
+                        </setting>
+                        <setting string="Gecikme eşikleri" help="Kaç gündür bekleyen iş uyarı / kritik sayılır.">
+                            <div class="row">
+                                <label for="reporting_warning_days" class="col-lg-4 o_light_label"/>
+                                <field name="reporting_warning_days" class="col-lg-2"/>
+                            </div>
+                            <div class="row">
+                                <label for="reporting_critical_days" class="col-lg-4 o_light_label"/>
+                                <field name="reporting_critical_days" class="col-lg-2"/>
+                            </div>
+                        </setting>
+                    </block>
+                    <block title="Görünürlük" name="reporting_visibility_block">
+                        <setting string="Merkezde gizlenecek modeller"
+                                 help="Bu modellerin aktiviteleri Raporlama Merkezinde listelenmez (örn. otomatik vade hatırlatmaları).">
+                            <field name="reporting_excluded_model_ids" widget="many2many_tags" options="{'no_create': True}"/>
+                        </setting>
+                        <setting string="Panolar" help="Sistemdeki pano menülerini bulup kayıt defterine ekler.">
+                            <button name="action_reporting_scan_dashboards" type="object" string="Panoları Tara" class="btn-link" icon="fa-search"/>
+                        </setting>
+                    </block>
+                </app>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="action_reporting_config_settings" model="ir.actions.act_window">
+        <field name="name">Ayarlar</field>
+        <field name="res_model">res.config.settings</field>
+        <field name="view_mode">form</field>
+        <field name="target">inline</field>
+        <field name="context">{'module': 'mimol_reporting'}</field>
+    </record>
+</odoo>

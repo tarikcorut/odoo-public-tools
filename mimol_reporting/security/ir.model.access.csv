@@ -1,0 +1,5 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_reporting_dashboard_category_user,reporting.dashboard.category user,model_reporting_dashboard_category,group_reporting_user,1,0,0,0
+access_reporting_dashboard_category_manager,reporting.dashboard.category manager,model_reporting_dashboard_category,group_reporting_manager,1,1,1,1
+access_reporting_dashboard_user,reporting.dashboard user,model_reporting_dashboard,group_reporting_user,1,0,0,0
+access_reporting_dashboard_manager,reporting.dashboard manager,model_reporting_dashboard,group_reporting_manager,1,1,1,1

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="mail_activity_type_view_form_reporting" model="ir.ui.view">
+        <field name="name">mail.activity.type.form.reporting</field>
+        <field name="model">mail.activity.type</field>
+        <field name="inherit_id" ref="mail.mail_activity_type_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='keep_done']" position="after">
+                <field name="reporting_kind"/>
+                <field name="reporting_exclude"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="mail_activity_type_view_tree_reporting" model="ir.ui.view">
+        <field name="name">mail.activity.type.tree.reporting</field>
+        <field name="model">mail.activity.type</field>
+        <field name="inherit_id" ref="mail.mail_activity_type_view_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//tree" position="inside">
+                <field name="reporting_kind" optional="show"/>
+                <field name="keep_done" optional="show"/>
+                <field name="reporting_exclude" optional="show"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>

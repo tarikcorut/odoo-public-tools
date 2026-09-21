@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Menüler yüklendikten sonra: kategori kaydı Raporlama Merkezi / Panolar altına menü üretir -->
+    <data noupdate="1">
+        <record id="dashboard_category_finance" model="reporting.dashboard.category">
+            <field name="name">Finans</field>
+            <field name="sequence">10</field>
+        </record>
+        <record id="dashboard_category_construction" model="reporting.dashboard.category">
+            <field name="name">İnşaat</field>
+            <field name="sequence">20</field>
+        </record>
+        <record id="dashboard_category_purchase" model="reporting.dashboard.category">
+            <field name="name">İhale / Satınalma</field>
+            <field name="sequence">30</field>
+        </record>
+        <record id="dashboard_category_requests" model="reporting.dashboard.category">
+            <field name="name">Talepler</field>
+            <field name="sequence">40</field>
+        </record>
+        <record id="dashboard_category_other" model="reporting.dashboard.category">
+            <field name="name">Diğer</field>
+            <field name="sequence">99</field>
+        </record>
+    </data>
+</odoo>

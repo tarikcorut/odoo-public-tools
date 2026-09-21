@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <record id="ir_config_keep_done_default" model="ir.config_parameter">
+            <field name="key">mimol_reporting.keep_done_default</field>
+            <field name="value">True</field>
+        </record>
+        <record id="ir_config_warning_days" model="ir.config_parameter">
+            <field name="key">mimol_reporting.warning_days</field>
+            <field name="value">3</field>
+        </record>
+        <record id="ir_config_critical_days" model="ir.config_parameter">
+            <field name="key">mimol_reporting.critical_days</field>
+            <field name="value">7</field>
+        </record>
+    </data>
+
+    <!-- Gece: Planlanan -> Bugün -> Geciken geçişleri -->
+    <record id="ir_cron_refresh_deadline_state" model="ir.cron">
+        <field name="name">Raporlama Merkezi: aktivite durumlarını tazele</field>
+        <field name="model_id" ref="mail.model_mail_activity"/>
+        <field name="state">code</field>
+        <field name="code">model._cron_refresh_deadline_state()</field>
+        <field name="interval_number">1</field>
+        <field name="interval_type">days</field>
+        <field name="nextcall" eval="(DateTime.now().replace(hour=0, minute=10, second=0) + timedelta(days=1)).strftime('%Y-%m-%d %H:%M:%S')"/>
+        <field name="active" eval="True"/>
+    </record>
+
+    <!-- Menü aksiyonları: sunucu aksiyonu -> model metodu (dinamik domain / görünümler) -->
+    <record id="action_server_my_work" model="ir.actions.server">
+        <field name="name">Benim İşlerim</field>
+        <field name="model_id" ref="mail.model_mail_activity"/>
+        <field name="state">code</field>
+        <field name="code">action = model.action_reporting_open('my_work')</field>
+    </record>
+    <record id="action_server_my_approvals" model="ir.actions.server">
+        <field name="name">Onaylarım</field>
+        <field name="model_id" ref="mail.model_mail_activity"/>
+        <field name="state">code</field>
+        <field name="code">action = model.action_reporting_open('my_approvals')</field>
+    </record>
+    <record id="action_server_my_tasks" model="ir.actions.server">
+        <field name="name">Görevlerim</field>
+        <field name="model_id" ref="mail.model_mail_activity"/>
+        <field name="state">code</field>
+        <field name="code">action = model.action_reporting_open('my_tasks')</field>
+    </record>
+    <record id="action_server_my_history" model="ir.actions.server">
+        <field name="name">Geçmişim</field>
+        <field name="model_id" ref="mail.model_mail_activity"/>
+        <field name="state">code</field>
+        <field name="code">action = model.action_reporting_open('my_history')</field>
+    </record>
+    <record id="action_server_all_open" model="ir.actions.server">
+        <field name="name">Tüm Açık İşler</field>
+        <field name="model_id" ref="mail.model_mail_activity"/>
+        <field name="state">code</field>
+        <field name="code">action = model.action_reporting_open('all_open')</field>
+    </record>
+    <record id="action_server_all_history" model="ir.actions.server">
+        <field name="name">Onay ve İş Geçmişi</field>
+        <field name="model_id" ref="mail.model_mail_activity"/>
+        <field name="state">code</field>
+        <field name="code">action = model.action_reporting_open('all_history')</field>
+    </record>
+    <record id="action_server_reports" model="ir.actions.server">
+        <field name="name">Raporlar</field>
+        <field name="model_id" ref="mail.model_mail_activity"/>
+        <field name="state">code</field>
+        <field name="code">action = model.action_reporting_open('reports')</field>
+    </record>
+</odoo>

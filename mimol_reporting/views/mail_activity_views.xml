@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Arama: Benim / durum / tür / tamamlanan; gruplar -->
+    <record id="mail_activity_view_search_reporting" model="ir.ui.view">
+        <field name="name">mail.activity.search.reporting</field>
+        <field name="model">mail.activity</field>
+        <field name="arch" type="xml">
+            <search string="İşler">
+                <field name="res_name" string="Belge"/>
+                <field name="summary"/>
+                <field name="activity_type_id"/>
+                <field name="res_model_name" string="Uygulama"/>
+                <field name="user_id"/>
+                <field name="create_uid" string="Kimden"/>
+                <filter name="filter_my" string="Benim" domain="[('user_id', '=', uid)]"/>
+                <filter name="filter_done_by_me" string="Benim Tamamladıklarım" domain="[('done_user_id', '=', uid)]"/>
+                <separator/>
+                <filter name="filter_overdue" string="Geciken" domain="[('deadline_state', '=', 'overdue')]"/>
+                <filter name="filter_today" string="Bugün" domain="[('deadline_state', '=', 'today')]"/>
+                <filter name="filter_planned" string="Planlanan" domain="[('deadline_state', '=', 'planned')]"/>
+                <filter name="filter_done" string="Tamamlanan" domain="[('active', '=', False)]"/>
+                <separator/>
+                <filter name="filter_approval" string="Onay" domain="[('reporting_kind', '=', 'approval')]"/>
+                <filter name="filter_task" string="Görev" domain="[('reporting_kind', '=', 'task')]"/>
+                <filter name="filter_info" string="Bilgi" domain="[('reporting_kind', '=', 'info')]"/>
+                <separator/>
+                <filter name="filter_refused" string="Reddedilen" domain="[('done_result', '=', 'refused')]"/>
+                <filter name="filter_late" string="Gecikmeli Tamamlanan" domain="[('was_late', '=', True)]"/>
+                <separator/>
+                <filter name="filter_deadline" string="Son Tarih" date="date_deadline"/>
+                <filter name="filter_done_date" string="Tamamlanma" date="date_done_dt"/>
+                <group expand="0" string="Grupla">
+                    <filter name="group_state" string="Durum" context="{'group_by': 'deadline_state'}"/>
+                    <filter name="group_kind" string="Tür" context="{'group_by': 'reporting_kind'}"/>
+                    <filter name="group_app" string="Uygulama" context="{'group_by': 'res_model_name'}"/>
+                    <filter name="group_type" string="Aktivite Tipi" context="{'group_by': 'activity_type_id'}"/>
+                    <filter name="group_user" string="Sorumlu" context="{'group_by': 'user_id'}"/>
+                    <filter name="group_done_user" string="Tamamlayan" context="{'group_by': 'done_user_id'}"/>
+                    <filter name="group_result" string="Sonuç" context="{'group_by': 'done_result'}"/>
+                    <filter name="group_month" string="Tamamlanma Ayı" context="{'group_by': 'date_done_dt:month'}"/>
+                    <filter name="group_create_month" string="Açılış Ayı" context="{'group_by': 'create_date:month'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Kanban: Geciken | Bugün | Planlanan sütunları (sayılar başlıkta) -->
+    <record id="mail_activity_view_kanban_reporting" model="ir.ui.view">
+        <field name="name">mail.activity.kanban.reporting</field>
+        <field name="model">mail.activity</field>
+        <field name="arch" type="xml">
+            <kanban default_group_by="deadline_state" records_draggable="0" quick_create="false"
+                    group_create="false" group_delete="false" group_edit="false" create="0" sample="1">
+                <field name="deadline_state"/>
+                <field name="reporting_kind"/>
+                <field name="res_model_name"/>
+                <field name="res_name"/>
+                <field name="activity_type_id"/>
+                <field name="icon"/>
+                <field name="summary"/>
+                <field name="user_id"/>
+                <field name="create_uid"/>
+                <field name="date_deadline"/>
+                <progressbar field="reporting_kind" colors='{"approval": "danger", "task": "info", "info": "muted"}'/>
+                <templates>
+                    <t t-name="kanban-box">
+                        <div class="oe_kanban_card oe_kanban_global_click_edit o_kanban_record_has_image_fill">
+                            <div class="d-flex justify-content-between align-items-start">
+                                <span t-attf-class="badge rounded-pill #{record.reporting_kind.raw_value == 'approval' ? 'text-bg-danger' : record.reporting_kind.raw_value == 'task' ? 'text-bg-primary' : 'text-bg-secondary'}">
+                                    <field name="reporting_kind"/>
+                                </span>
+                                <small class="text-muted"><field name="res_model_name"/></small>
+                            </div>
+                            <div class="mt-1">
+                                <a type="object" name="action_open_document" class="fw-bold text-decoration-none">
+                                    <field name="res_name"/>
+                                </a>
+                            </div>
+                            <div class="text-muted small">
+                                <i t-att-class="'fa fa-fw ' + (record.icon.raw_value || 'fa-tasks')" title="Aktivite tipi"/>
+                                <field name="activity_type_id"/>
+                                <t t-if="record.summary.raw_value"> · <field name="summary"/></t>
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center mt-2">
+                                <span t-attf-class="#{record.deadline_state.raw_value == 'overdue' ? 'text-danger fw-bold' : record.deadline_state.raw_value == 'today' ? 'text-warning fw-bold' : 'text-muted'}">
+                                    <i class="fa fa-clock-o" title="Son tarih"/> <field name="date_deadline"/>
+                                </span>
+                                <field name="user_id" widget="many2one_avatar_user"/>
+                            </div>
+                            <div class="mt-2">
+                                <button type="object" name="action_open_document" class="btn btn-sm btn-primary">Aç</button>
+                                <button type="object" name="action_reporting_mark_done" class="btn btn-sm btn-secondary"
+                                        t-if="record.reporting_kind.raw_value != 'approval'">Tamamlandı</button>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <!-- Liste: açık işler -->
+    <record id="mail_activity_view_tree_reporting" model="ir.ui.view">
+        <field name="name">mail.activity.tree.reporting</field>
+        <field name="model">mail.activity</field>
+        <field name="arch" type="xml">
+            <tree string="İşler" create="0" decoration-danger="deadline_state == 'overdue'"
+                  decoration-warning="deadline_state == 'today'" sample="1">
+                <field name="deadline_state" widget="badge"
+                       decoration-danger="deadline_state == 'overdue'" decoration-warning="deadline_state == 'today'"
+                       decoration-info="deadline_state == 'planned'"/>
+                <field name="reporting_kind" widget="badge" decoration-danger="reporting_kind == 'approval'"
+                       decoration-info="reporting_kind == 'task'"/>
+                <field name="res_model_name"/>
+                <field name="res_name" string="Belge"/>
+                <field name="activity_type_id"/>
+                <field name="summary" optional="show"/>
+                <field name="user_id" widget="many2one_avatar_user" string="Sorumlu"/>
+                <field name="create_uid" string="Kimden" optional="show"/>
+                <field name="create_date" string="Açılış" optional="hide"/>
+                <field name="date_deadline" string="Son Tarih"/>
+                <button name="action_open_document" type="object" icon="fa-external-link" title="Belgeyi Aç"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Liste: geçmiş (arşivlenmiş aktiviteler) -->
+    <record id="mail_activity_view_tree_history" model="ir.ui.view">
+        <field name="name">mail.activity.tree.history</field>
+        <field name="model">mail.activity</field>
+        <field name="arch" type="xml">
+            <tree string="Geçmiş" create="0" decoration-danger="done_result == 'refused'"
+                  decoration-muted="done_result == 'cancelled'" sample="1">
+                <field name="date_done_dt" string="Tamamlanma"/>
+                <field name="done_result" widget="badge" decoration-success="done_result == 'done'"
+                       decoration-danger="done_result == 'refused'"/>
+                <field name="reporting_kind" widget="badge" decoration-danger="reporting_kind == 'approval'"
+                       decoration-info="reporting_kind == 'task'"/>
+                <field name="res_model_name"/>
+                <field name="res_name" string="Belge"/>
+                <field name="activity_type_id"/>
+                <field name="summary" optional="hide"/>
+                <field name="user_id" string="Sorumlu" widget="many2one_avatar_user"/>
+                <field name="done_user_id" string="Tamamlayan" widget="many2one_avatar_user"/>
+                <field name="create_date" string="Açılış" optional="show"/>
+                <field name="date_deadline" string="Son Tarih" optional="show"/>
+                <field name="duration_days" sum="Toplam" avg="Ortalama"/>
+                <field name="was_late" widget="boolean_toggle" readonly="1"/>
+                <field name="done_feedback" optional="hide"/>
+                <button name="action_open_document" type="object" icon="fa-external-link" title="Belgeyi Aç"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="mail_activity_view_pivot_reporting" model="ir.ui.view">
+        <field name="name">mail.activity.pivot.reporting</field>
+        <field name="model">mail.activity</field>
+        <field name="arch" type="xml">
+            <pivot string="İş Analizi" sample="1">
+                <field name="res_model_name" type="row"/>
+                <field name="reporting_kind" type="col"/>
+                <field name="duration_days" type="measure"/>
+            </pivot>
+        </field>
+    </record>
+
+    <record id="mail_activity_view_graph_reporting" model="ir.ui.view">
+        <field name="name">mail.activity.graph.reporting</field>
+        <field name="model">mail.activity</field>
+        <field name="arch" type="xml">
+            <graph string="İş Analizi" type="bar" stacked="1" sample="1">
+                <field name="res_model_name"/>
+                <field name="reporting_kind"/>
+            </graph>
+        </field>
+    </record>
+</odoo>

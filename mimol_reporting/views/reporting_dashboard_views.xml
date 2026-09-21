@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Panolar: kategori gruplu kartlar; yalnız kaynak menüsünü görebildiklerim -->
+    <record id="reporting_dashboard_view_kanban" model="ir.ui.view">
+        <field name="name">reporting.dashboard.kanban</field>
+        <field name="model">reporting.dashboard</field>
+        <field name="arch" type="xml">
+            <kanban default_group_by="category_id" records_draggable="0" group_create="false"
+                    group_delete="false" group_edit="false" quick_create="false" create="0" sample="1">
+                <field name="name"/>
+                <field name="description"/>
+                <field name="icon"/>
+                <field name="color"/>
+                <field name="source_module"/>
+                <field name="category_id"/>
+                <templates>
+                    <t t-name="kanban-box">
+                        <div t-attf-class="oe_kanban_card oe_kanban_color_#{record.color.raw_value}">
+                            <div class="d-flex align-items-center">
+                                <span class="fa-stack fa-lg me-2">
+                                    <i class="fa fa-circle fa-stack-2x text-primary"/>
+                                    <i t-att-class="'fa fa-stack-1x fa-inverse ' + (record.icon.raw_value || 'fa-tachometer')"/>
+                                </span>
+                                <div>
+                                    <strong><field name="name"/></strong>
+                                    <div class="text-muted small" t-if="record.source_module.raw_value">
+                                        <field name="source_module"/>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="mt-2 text-muted small" t-if="record.description.raw_value">
+                                <field name="description"/>
+                            </div>
+                            <div class="mt-2">
+                                <button type="object" name="action_open" class="btn btn-sm btn-primary">Panoya Git</button>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <record id="reporting_dashboard_view_tree" model="ir.ui.view">
+        <field name="name">reporting.dashboard.tree</field>
+        <field name="model">reporting.dashboard</field>
+        <field name="arch" type="xml">
+            <tree string="Pano Kayıtları">
+                <field name="sequence" widget="handle"/>
+                <field name="name"/>
+                <field name="category_id"/>
+                <field name="menu_complete_name"/>
+                <field name="source_module" optional="show"/>
+                <field name="is_visible" optional="show"/>
+                <field name="active" optional="hide"/>
+                <button name="action_open" type="object" icon="fa-external-link" title="Panoya Git"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="reporting_dashboard_view_form" model="ir.ui.view">
+        <field name="name">reporting.dashboard.form</field>
+        <field name="model">reporting.dashboard</field>
+        <field name="arch" type="xml">
+            <form string="Pano Kaydı">
+                <header>
+                    <button name="action_open" type="object" string="Panoya Git" class="btn-primary"/>
+                </header>
+                <sheet>
+                    <widget name="web_ribbon" title="Arşiv" bg_color="text-bg-danger" invisible="active"/>
+                    <div class="oe_title">
+                        <h1><field name="name" placeholder="Pano adı"/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="category_id"/>
+                            <field name="menu_id" options="{'no_create': True}"/>
+                            <field name="menu_complete_name"/>
+                            <field name="action_ref"/>
+                            <field name="source_module"/>
+                        </group>
+                        <group>
+                            <field name="icon"/>
+                            <field name="color" widget="color_picker"/>
+                            <field name="sequence"/>
+                            <field name="active"/>
+                            <field name="is_visible"/>
+                            <field name="generated_menu_id"/>
+                        </group>
+                    </group>
+                    <field name="description" placeholder="Kartta görünen kısa açıklama"/>
+                    <div class="alert alert-info" role="alert">
+                        Görünürlük panonun kaynak menüsünden gelir: kullanıcı o menüyü kendi modülünde görebiliyorsa
+                        Raporlama Merkezinde de görür, göremiyorsa görmez. Kaydedilince Raporlama Merkezi / Panolar
+                        altında aynı aksiyona bağlı bir menü üretilir (kopya pano yoktur).
+                    </div>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="reporting_dashboard_view_search" model="ir.ui.view">
+        <field name="name">reporting.dashboard.search</field>
+        <field name="model">reporting.dashboard</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="category_id"/>
+                <field name="source_module"/>
+                <filter name="filter_visible" string="Görebildiklerim" domain="[('is_visible', '=', True)]"/>
+                <filter name="filter_archived" string="Arşiv" domain="[('active', '=', False)]"/>
+                <group expand="0" string="Grupla">
+                    <filter name="group_category" string="Kategori" context="{'group_by': 'category_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Kullanıcı sayfası: yalnız görebildiklerim -->
+    <record id="action_reporting_dashboards" model="ir.actions.act_window">
+        <field name="name">Panolar</field>
+        <field name="res_model">reporting.dashboard</field>
+        <field name="view_mode">kanban,tree</field>
+        <field name="domain">[('is_visible', '=', True)]</field>
+        <field name="search_view_id" ref="reporting_dashboard_view_search"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Görebildiğiniz pano yok</p>
+            <p>Panolar, bağlı oldukları modülün menüsünü görebilen kullanıcılara açılır.
+               Yönetici, Ayarlar / Pano Kayıtları ekranından yeni pano ekleyebilir ya da "Panoları Tara" ile bulabilir.</p>
+        </field>
+    </record>
+
+    <!-- Yönetici: kayıt defteri -->
+    <record id="action_reporting_dashboard_config" model="ir.actions.act_window">
+        <field name="name">Pano Kayıtları</field>
+        <field name="res_model">reporting.dashboard</field>
+        <field name="view_mode">tree,kanban,form</field>
+        <field name="search_view_id" ref="reporting_dashboard_view_search"/>
+    </record>
+
+    <record id="action_reporting_dashboard_scan" model="ir.actions.server">
+        <field name="name">Panoları Tara</field>
+        <field name="model_id" ref="model_reporting_dashboard"/>
+        <field name="binding_model_id" ref="model_reporting_dashboard"/>
+        <field name="binding_view_types">list,kanban</field>
+        <field name="state">code</field>
+        <field name="code">action = model.action_scan_menus()</field>
+    </record>
+
+    <record id="reporting_dashboard_category_view_tree" model="ir.ui.view">
+        <field name="name">reporting.dashboard.category.tree</field>
+        <field name="model">reporting.dashboard.category</field>
+        <field name="arch" type="xml">
+            <tree string="Pano Kategorileri" editable="bottom">
+                <field name="sequence" widget="handle"/>
+                <field name="name"/>
+                <field name="dashboard_count" string="Pano"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="action_reporting_dashboard_category" model="ir.actions.act_window">
+        <field name="name">Pano Kategorileri</field>
+        <field name="res_model">reporting.dashboard.category</field>
+        <field name="view_mode">tree</field>
+    </record>
+</odoo>

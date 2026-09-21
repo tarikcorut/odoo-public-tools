@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="module_category_reporting" model="ir.module.category">
+        <field name="name">Raporlama Merkezi</field>
+        <field name="sequence">60</field>
+    </record>
+
+    <!-- Kullanıcı: kendi aktiviteleri, geçmişi ve görebildiği panolar -->
+    <record id="group_reporting_user" model="res.groups">
+        <field name="name">Kullanıcı</field>
+        <field name="category_id" ref="module_category_reporting"/>
+        <field name="comment">Benim İşlerim, Onaylarım, Görevlerim, Geçmişim ve yetkili olduğu panolar.</field>
+    </record>
+
+    <!-- Yönetici: tüm açık işler, tüm geçmiş, raporlar ve ayarlar -->
+    <record id="group_reporting_manager" model="res.groups">
+        <field name="name">Yönetici</field>
+        <field name="category_id" ref="module_category_reporting"/>
+        <field name="implied_ids" eval="[(4, ref('group_reporting_user'))]"/>
+        <field name="comment">Tüm kullanıcıların açık işleri ve geçmişi, raporlar, pano kayıt defteri ve ayarlar.</field>
+    </record>
+
+    <!-- Her iç kullanıcı Kullanıcı grubundadır -->
+    <record id="base.group_user" model="res.groups">
+        <field name="implied_ids" eval="[(4, ref('group_reporting_user'))]"/>
+    </record>
+    <record id="base.group_system" model="res.groups">
+        <field name="implied_ids" eval="[(4, ref('group_reporting_manager'))]"/>
+    </record>
+</odoo>
