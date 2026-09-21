@@ -194,38 +194,50 @@ class ReportingDashboard(models.Model):
     # Tarama: sistemdeki panoları bul ve kayıt defterine ekle
     # ------------------------------------------------------------------
     NAME_PATTERN = r'dashboard|pano|panel|anasayfa|genel bakış|overview|cockpit'
+    # Sıra önemli: yardım masası panoları (İK/Finans/Satınalma) "Talepler"e girer
     CATEGORY_RULES = [
-        ('Finans', r'nakit|kredi|çek|senet|fon|muhasebe|banka|finans|loan|cash|bank|account'),
+        ('Talepler', r'helpdesk|yardım|talep|ticket'),
         ('İnşaat', r'hakediş|hakedis|inşaat|insaat|şantiye|construction|proje'),
         ('İhale / Satınalma', r'ihale|satınalma|satinalma|tender|purchase|procurement'),
-        ('Talepler', r'helpdesk|yardım|talep|ticket|bilgi işlem|ik dashboard|insan kaynak'),
+        ('Finans', r'nakit|kredi|çek|senet|fon|muhasebe|banka|finans|loan|cash|bank|account'),
     ]
+
+    @staticmethod
+    def _tr_lower(text):
+        """Türkçe duyarlı küçük harf: İ→i, I→ı (Python lower() İ için nokta bırakır)."""
+        return (text or '').replace('İ', 'i').replace('I', 'ı').lower()
 
     @api.model
     def _scan_candidate_menus(self):
         root = self.env.ref('mimol_reporting.menu_reporting_root', raise_if_not_found=False)
         Menu = self.env['ir.ui.menu'].sudo().with_context(active_test=True)
         menus = Menu.search([('action', '!=', False)])
-        pattern = re.compile(self.NAME_PATTERN, re.IGNORECASE)
+        pattern = re.compile(self.NAME_PATTERN)
         found = Menu
-        for menu in menus:
+        seen_actions = set()
+        # Kök menüler en sona: aynı aksiyon alt menüde de varsa alt menü kazanır
+        for menu in menus.sorted(key=lambda m: (not m.parent_id, m.id)):
             if root and menu.complete_name.startswith(root.complete_name):
                 continue
             act = menu.action
             if not act:
                 continue
-            name_hit = bool(pattern.search(menu.name or ''))
+            key = (act._name, act.id)
+            if key in seen_actions:
+                continue
+            name_hit = bool(pattern.search(self._tr_lower(menu.name)))
             tag_hit = act._name == 'ir.actions.client' and 'dashboard' in (act.tag or '').lower()
             if name_hit or tag_hit:
                 found |= menu
+                seen_actions.add(key)
         return found
 
     @api.model
     def _guess_category(self, menu):
-        text = (menu.complete_name or '').lower()
+        text = self._tr_lower(menu.complete_name)
         Category = self.env['reporting.dashboard.category']
         for cat_name, rx in self.CATEGORY_RULES:
-            if re.search(rx, text, re.IGNORECASE):
+            if re.search(rx, text):
                 cat = Category.search([('name', '=', cat_name)], limit=1)
                 if not cat:
                     cat = Category.create({'name': cat_name})
