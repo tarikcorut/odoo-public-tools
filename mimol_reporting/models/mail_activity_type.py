@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+import re
+
 from odoo import api, fields, models
 
 
@@ -21,14 +23,21 @@ class MailActivityType(models.Model):
              'raporlarında gösterilmez (örn. otomatik vade hatırlatmaları).',
     )
 
+    # Yeni kurulan modüllerin onay tipleri elle ayar gerektirmesin (kurulum kancasıyla aynı kural)
+    APPROVAL_NAME_RX = re.compile(r'onay|approv', re.IGNORECASE)
+
     @api.model_create_multi
     def create(self, vals_list):
-        # Ayar açıksa yeni tipler de geçmişi saklar
+        # Ayar açıksa yeni tipler de geçmişi saklar; adı onay/approval içerenler "Onay" türü olur
         keep = self.env['ir.config_parameter'].sudo().get_param(
             'mimol_reporting.keep_done_default', 'True') == 'True'
         for vals in vals_list:
             if keep and 'keep_done' not in vals:
                 vals['keep_done'] = True
+            name = vals.get('name')
+            if 'reporting_kind' not in vals and isinstance(name, str) \
+                    and self.APPROVAL_NAME_RX.search(name.replace('İ', 'i')):
+                vals['reporting_kind'] = 'approval'
         return super().create(vals_list)
 
     def action_reporting_keep_done_all(self):
