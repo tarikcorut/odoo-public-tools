@@ -71,9 +71,18 @@ class ReportingDashboard(models.Model):
     color = fields.Integer(string='Renk')
     sequence = fields.Integer(default=10)
     active = fields.Boolean(default=True)
+    def _menu_id_domain(self):
+        """Kaynak menü: aksiyonu olan, Raporlama Merkezi ağacı dışındaki menüler.
+        (complete_name aranabilir alan değil; ağaç ilişkisi child_of ile dışlanır.)"""
+        domain = [('action', '!=', False)]
+        root = self.env.ref('mimol_reporting.menu_reporting_root', raise_if_not_found=False)
+        if root:
+            domain = ['!', ('id', 'child_of', root.id)] + domain
+        return domain
+
     menu_id = fields.Many2one(
         'ir.ui.menu', string='Kaynak Menü', required=True, ondelete='cascade',
-        domain="[('action', '!=', False), ('complete_name', 'not ilike', 'Raporlama Merkezi')]",
+        domain=lambda self: self._menu_id_domain(),
         help='Panonun kendi modülündeki menüsü (Raporlama Merkezi altındaki üretilmiş menüler seçilmez). '
              'Görünürlük ve açılan sayfa bu menüden gelir.',
     )
