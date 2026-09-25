@@ -17,8 +17,13 @@ class ResConfigSettings(models.TransientModel):
         string='Yeni aktivite tipleri geçmişi saklasın', config_parameter='mimol_reporting.keep_done_default',
         default=True,
     )
+    # İlişki tablosu açıkça adlandırılır: `res.config.settings` üzerinde
+    # `ir.model`'e bakan başka bir Many2many daha var (attachment_google_drive)
+    # ve adı verilmeyen iki alan aynı tabloyu türetip kurulumu düşürüyor.
     reporting_excluded_model_ids = fields.Many2many(
-        'ir.model', string='Merkezde gizlenecek modeller',
+        'ir.model', relation='res_config_settings_reporting_excl_model_rel',
+        column1='config_id', column2='model_id',
+        string='Merkezde gizlenecek modeller',
         help='Bu modellerin aktiviteleri Raporlama Merkezinde gösterilmez (örn. otomatik çek vade hatırlatmaları).',
     )
 
